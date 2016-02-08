@@ -1,20 +1,21 @@
 package com.gmail.htaihm.nytimessearch;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Article implements Serializable {
+public class Article implements Parcelable {
     private final static String TAG = "Article";
 
-    String mWebUrl;
-    String mHeadline;
-    String mThumbnail;
+    private String mWebUrl;
+    private String mHeadline;
+    private String mThumbnail;
 
     public Article(JSONObject jsonObject) {
         try {
@@ -59,4 +60,34 @@ public class Article implements Serializable {
 
         return results;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.mWebUrl);
+        dest.writeString(this.mHeadline);
+        dest.writeString(this.mThumbnail);
+    }
+
+    protected Article(Parcel in) {
+        this.mWebUrl = in.readString();
+        this.mHeadline = in.readString();
+        this.mThumbnail = in.readString();
+    }
+
+    public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
+        @Override
+        public Article createFromParcel(Parcel source) {
+            return new Article(source);
+        }
+
+        @Override
+        public Article[] newArray(int size) {
+            return new Article[size];
+        }
+    };
 }

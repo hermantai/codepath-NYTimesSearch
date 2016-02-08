@@ -8,14 +8,12 @@ import android.support.v7.widget.Toolbar;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.io.Serializable;
-
 public class ArticleActivity extends AppCompatActivity {
     private static final String INTENT_EXTRA_ARTICLE = "com.gmail.htaihm.nytimessearch.article";
 
     public static Intent newIntent(Context context, Article article) {
         Intent i = new Intent(context, ArticleActivity.class);
-        i.putExtra(INTENT_EXTRA_ARTICLE, (Serializable) article);
+        i.putExtra(INTENT_EXTRA_ARTICLE, article);
 
         return i;
     }
@@ -27,7 +25,7 @@ public class ArticleActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Article article = (Article) getIntent().getSerializableExtra(INTENT_EXTRA_ARTICLE);
+        Article article = getIntent().getParcelableExtra(INTENT_EXTRA_ARTICLE);
         String url = article.getWebUrl();
 
         WebView webView = (WebView) findViewById(R.id.wvArticle);
