@@ -13,6 +13,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class ArticleArrayAdapter extends ArrayAdapter<Article> {
     public ArticleArrayAdapter(Context context, List<Article> articles) {
         super(context, android.R.layout.simple_list_item_1, articles);
@@ -40,13 +43,12 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         return convertView;
     }
 
-    private class ViewHolder {
-        private ImageView mIvImage;
-        private TextView mTvTitle;
+    class ViewHolder {
+        @Bind(R.id.ivImage) ImageView mIvImage;
+        @Bind(R.id.tvTitle) TextView mTvTitle;
 
         private void bindView(View v) {
-            mIvImage = (ImageView) v.findViewById(R.id.ivImage);
-            mTvTitle = (TextView) v.findViewById(R.id.tvTitle);
+            ButterKnife.bind(this, v);
         }
 
         private void bindItem(Article article) {

@@ -22,14 +22,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
 
-    private EditText mEtQuery;
-    private GridView mGvResults;
-    private Button mBtnSearch;
+    @Bind(R.id.etQuery) EditText mEtQuery;
+    @Bind(R.id.gvResults) GridView mGvResults;
+    @Bind(R.id.btnSearch) Button mBtnSearch;
 
     private ArrayList<Article> mArticles;
 
@@ -46,9 +48,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void setUpViews() {
-        mEtQuery = (EditText) findViewById(R.id.etQuery);
-        mGvResults = (GridView) findViewById(R.id.gvResults);
-        mBtnSearch = (Button) findViewById(R.id.btnSearch);
+        ButterKnife.bind(this);
 
         mArticles = new ArrayList<>();
         mAdapter = new ArticleArrayAdapter(this, mArticles);
@@ -99,6 +99,15 @@ public class SearchActivity extends AppCompatActivity {
         params.put("api-key", "cb6d7de957f77c1d1804cd599b8ccdb7:14:74323340");
         params.put("page", 0);
         params.put("q", query);
+
+        if (BuildConfig.DEBUG) {
+            Log.d(
+                    TAG,
+                    String.format(
+                            "Search article with url: %s, request params: %s",
+                            url,
+                            params));
+        }
 
         client.get(url, params, new JsonHttpResponseHandler(){
             @Override

@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
 }
 
 dependencies {
@@ -25,6 +28,14 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.loopj.android:android-async-http:1.4.9'
+
     // Load remote images from the network into image views
     compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile 'com.jakewharton:butterknife:7.0.1'
+
+    // Use Retrofit to deserialize REST API call responses to POJO's
+    compile 'com.squareup.retrofit:retrofit:1.6.1'
+    compile 'com.google.code.gson:gson:2.3'
+    compile 'org.parceler:parceler:0.2.13'
 }
