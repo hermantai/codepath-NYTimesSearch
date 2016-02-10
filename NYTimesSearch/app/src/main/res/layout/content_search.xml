@@ -13,6 +13,15 @@
     tools:context="com.gmail.htaihm.nytimessearch.SearchActivity"
     tools:showIn="@layout/activity_search">
 
+    <ProgressBar
+        android:id="@+id/pbSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:indeterminate="true"
+        android:visibility="gone"
+        />
     <GridView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

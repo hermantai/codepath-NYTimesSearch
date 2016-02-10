@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.gmail.htaihm.nytimessearch.model.Article;
@@ -33,6 +34,7 @@ public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
 
     @Bind(R.id.gvResults) GridView mGvResults;
+    @Bind(R.id.pbSearch) ProgressBar mPbSearch;
 
     private ArrayList<Article> mArticles;
 
@@ -138,6 +140,8 @@ public class SearchActivity extends AppCompatActivity {
                             params));
         }
 
+        setUiLoading(true);
+
         client.get(url, params, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -152,6 +156,7 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                setUiLoading(false);
             }
 
             @Override
@@ -166,7 +171,18 @@ public class SearchActivity extends AppCompatActivity {
                                 throwable,
                                 errorResponse),
                         throwable);
+                setUiLoading(false);
             }
         });
+    }
+
+    private void setUiLoading(boolean isLoading) {
+        if (isLoading) {
+            mPbSearch.setVisibility(View.VISIBLE);
+            mGvResults.setVisibility(View.GONE);
+        } else {
+            mPbSearch.setVisibility(View.GONE);
+            mGvResults.setVisibility(View.VISIBLE);
+        }
     }
 }
