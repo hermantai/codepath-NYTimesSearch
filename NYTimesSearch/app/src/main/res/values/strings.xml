@@ -9,6 +9,9 @@
     <string name="label_news_desk_value">News Desk Values</string>
     <string name="button_save">save</string>
     <string name="button_pick_date">Pick a date</string>
+    <string name="news_desk_value_arts">Arts</string>
+    <string name="news_desk_value_fashion_and_style">Fashion &amp; Style</string>
+    <string name="news_desk_value_sports">Sports</string>
     <string-array name="article_search_filter_sort_order_array">
         <item>Relevance</item>
         <item>Newest</item>

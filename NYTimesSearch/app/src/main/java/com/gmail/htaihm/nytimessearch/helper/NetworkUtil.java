@@ -1,4 +1,4 @@
-package com.gmail.htaihm.nytimessearch;
+package com.gmail.htaihm.nytimessearch.helper;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

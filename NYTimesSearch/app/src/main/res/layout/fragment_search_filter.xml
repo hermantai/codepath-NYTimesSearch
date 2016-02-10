@@ -38,7 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_columnSpan="2"
-        android:id="@+id/spinner"/>
+        android:id="@+id/sSortOrder"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -57,20 +57,20 @@
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New CheckBox"
-            android:id="@+id/checkBox"/>
+            android:text="@string/news_desk_value_arts"
+            android:id="@+id/cbArts"/>
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New CheckBox"
-            android:id="@+id/checkBox2"/>
+            android:text="@string/news_desk_value_fashion_and_style"
+            android:id="@+id/cbFashionAndStyle"/>
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New CheckBox"
-            android:id="@+id/checkBox3"/>
+            android:text="@string/news_desk_value_sports"
+            android:id="@+id/cbSports"/>
     </LinearLayout>
 
     <Button

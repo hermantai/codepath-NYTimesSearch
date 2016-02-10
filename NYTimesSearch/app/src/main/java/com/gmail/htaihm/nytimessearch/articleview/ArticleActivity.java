@@ -1,4 +1,4 @@
-package com.gmail.htaihm.nytimessearch;
+package com.gmail.htaihm.nytimessearch.articleview;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.gmail.htaihm.nytimessearch.R;
 import com.gmail.htaihm.nytimessearch.model.Article;
 
 public class ArticleActivity extends AppCompatActivity {

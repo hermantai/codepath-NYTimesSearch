@@ -1,4 +1,4 @@
-package com.gmail.htaihm.nytimessearch;
+package com.gmail.htaihm.nytimessearch.articlesearch;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gmail.htaihm.nytimessearch.R;
 import com.gmail.htaihm.nytimessearch.model.Article;
 import com.squareup.picasso.Picasso;
 

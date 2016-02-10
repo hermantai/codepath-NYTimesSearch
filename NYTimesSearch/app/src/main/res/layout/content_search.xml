@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.gmail.htaihm.nytimessearch.SearchActivity"
+    tools:context=".articlesearch.SearchActivity"
     tools:showIn="@layout/activity_search">
 
     <ProgressBar

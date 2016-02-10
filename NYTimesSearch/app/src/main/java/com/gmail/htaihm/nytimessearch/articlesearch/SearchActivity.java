@@ -1,4 +1,4 @@
-package com.gmail.htaihm.nytimessearch;
+package com.gmail.htaihm.nytimessearch.articlesearch;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +17,13 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.gmail.htaihm.nytimessearch.articleview.ArticleActivity;
+import com.gmail.htaihm.nytimessearch.BuildConfig;
+import com.gmail.htaihm.nytimessearch.R;
+import com.gmail.htaihm.nytimessearch.helper.ErrorHandling;
+import com.gmail.htaihm.nytimessearch.helper.NetworkUtil;
 import com.gmail.htaihm.nytimessearch.model.Article;
+import com.gmail.htaihm.nytimessearch.repo.QueryPreferences;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -86,12 +93,22 @@ public class SearchActivity extends AppCompatActivity {
                 // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
                 searchItem.collapseActionView();
+                QueryPreferences.setQuery(SearchActivity.this, query);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 return false;
+            }
+        });
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String q = QueryPreferences.getQuery(SearchActivity.this);
+                if (!TextUtils.isEmpty(q)) {
+                    searchView.setQuery(q, false);
+                }
             }
         });
 
