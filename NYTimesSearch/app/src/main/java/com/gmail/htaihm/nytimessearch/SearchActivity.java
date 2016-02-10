@@ -3,15 +3,15 @@ package com.gmail.htaihm.nytimessearch;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -32,9 +32,7 @@ import cz.msebera.android.httpclient.Header;
 public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
 
-    @Bind(R.id.etQuery) EditText mEtQuery;
     @Bind(R.id.gvResults) GridView mGvResults;
-    @Bind(R.id.btnSearch) Button mBtnSearch;
 
     private ArrayList<Article> mArticles;
 
@@ -68,19 +66,33 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
-        mBtnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fetchArticles();
-            }
-        });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        final MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                fetchArticles(query);
+                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
+                // see https://code.google.com/p/android/issues/detail?id=24599
+                searchView.clearFocus();
+                searchItem.collapseActionView();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -91,24 +103,23 @@ public class SearchActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_search_filter) {
-            SearchFilterFragment frag = SearchFilterFragment.newInstance();
-            FragmentManager fm = getSupportFragmentManager();
-            frag.show(fm, "SearchFilterFragment");
-            return true;
-        }
+        switch (id) {
+            case R.id.action_search_filter:
+                SearchFilterFragment frag = SearchFilterFragment.newInstance();
+                FragmentManager fm = getSupportFragmentManager();
+                frag.show(fm, "SearchFilterFragment");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
 
-        return super.onOptionsItemSelected(item);
+        }
     }
 
-    private void fetchArticles() {
+    private void fetchArticles(String query) {
         if (!NetworkUtil.isNetworkAvailable(this)) {
             Toast.makeText(this, "Network is not available", Toast.LENGTH_LONG).show();
             return;
         }
-
-        String query = mEtQuery.getText().toString();
 
         AsyncHttpClient client = new AsyncHttpClient();
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
@@ -136,9 +147,8 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    Log.d(TAG, articleJsonResults.toString());
+                    Log.d(TAG, "Json response: " + articleJsonResults.toString());
                     mAdapter.addAll(Article.fromJsonArray(articleJsonResults));
-                    Log.d(TAG, mArticles.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

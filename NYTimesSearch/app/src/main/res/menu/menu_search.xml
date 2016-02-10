@@ -5,7 +5,13 @@
     <item
         android:id="@+id/action_search_filter"
         android:icon="@drawable/ic_search_filter"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         android:title="@string/action_search_filter"
         app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_search"
+        android:orderInCategory="2"
+        android:title="Search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
 </menu>
