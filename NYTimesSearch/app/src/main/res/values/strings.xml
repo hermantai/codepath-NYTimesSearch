@@ -9,4 +9,9 @@
     <string name="label_news_desk_value">News Desk Values</string>
     <string name="button_save">save</string>
     <string name="button_pick_date">Pick a date</string>
+    <string-array name="article_search_filter_sort_order_array">
+        <item>Relevance</item>
+        <item>Newest</item>
+        <item>Oldest</item>
+    </string-array>
 </resources>

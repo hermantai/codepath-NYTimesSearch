@@ -10,9 +10,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class SearchFilterFragment extends DialogFragment {
     @Bind(R.id.btnDatePicker) Button mBtnDatePicker;
+    @Bind(R.id.btnSave) Button mBtnSave;
 
     public static SearchFilterFragment newInstance() {
         SearchFilterFragment frag = new SearchFilterFragment();
@@ -20,10 +22,22 @@ public class SearchFilterFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(
+            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        return inflater.inflate(R.layout.fragment_search_filter, container);
+        View v = inflater.inflate(R.layout.fragment_search_filter, container);
+        ButterKnife.bind(this, v);
+
+
+
+        return v;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     @Override
