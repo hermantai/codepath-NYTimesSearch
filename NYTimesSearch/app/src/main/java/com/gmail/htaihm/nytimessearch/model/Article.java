@@ -1,4 +1,4 @@
-package com.gmail.htaihm.nytimessearch;
+package com.gmail.htaihm.nytimessearch.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

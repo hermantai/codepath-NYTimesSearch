@@ -2,6 +2,7 @@ package com.gmail.htaihm.nytimessearch;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 
+import com.gmail.htaihm.nytimessearch.model.Article;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -82,7 +84,10 @@ public class SearchActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search_filter) {
+            SearchFilterFragment frag = SearchFilterFragment.newInstance();
+            FragmentManager fm = getSupportFragmentManager();
+            frag.show(fm, "SearchFilterFragment");
             return true;
         }
 

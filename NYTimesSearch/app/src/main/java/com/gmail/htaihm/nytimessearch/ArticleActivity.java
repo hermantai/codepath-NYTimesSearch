@@ -8,6 +8,8 @@ import android.support.v7.widget.Toolbar;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.gmail.htaihm.nytimessearch.model.Article;
+
 public class ArticleActivity extends AppCompatActivity {
     private static final String INTENT_EXTRA_ARTICLE = "com.gmail.htaihm.nytimessearch.article";
 
