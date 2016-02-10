@@ -9,7 +9,7 @@ Time spent: **2** hours spent in total
 The following **required** functionality is completed:
 
 * [x] User can **search for news article** by specifying a query and launching a search. Search displays a grid of image results from the New York Times Search API.
-* [ ] User can click on "settings" which allows selection of **advanced search options** to filter results
+* [x] User can click on "settings" which allows selection of **advanced search options** to filter results (Use an icon and the title is "Search Filter")
 * [ ] User can configure advanced search filters such as:
   * [ ] Begin Date (using a date picker)
   * [ ] News desk values (Arts, Fashion & Style, Sports)
@@ -20,7 +20,7 @@ The following **required** functionality is completed:
 
 The following **optional** features are implemented:
 
-* [ ] Implements robust error handling, [check if internet is available](http://guides.codepath.com/android/Sending-and-Managing-Network-Requests#checking-for-network-connectivity), handle error cases, network failures
+* [x] Implements robust error handling, [check if internet is available](http://guides.codepath.com/android/Sending-and-Managing-Network-Requests#checking-for-network-connectivity), handle error cases, network failures
 * [ ] Used the **ActionBar SearchView** or custom layout as the query box instead of an EditText
 * [ ] User can **share an article link** to their friends or email it to themselves
 * [ ] Replaced Filter Settings Activity with a lightweight modal overlay

@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.gmail.htaihm.nytimessearch.model.Article;
 import com.loopj.android.http.AsyncHttpClient;
@@ -67,6 +68,13 @@ public class SearchActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+        mBtnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchArticles();
+            }
+        });
     }
 
     @Override
@@ -94,7 +102,12 @@ public class SearchActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onArticleSearch(View view) {
+    private void fetchArticles() {
+        if (!NetworkUtil.isNetworkAvailable(this)) {
+            Toast.makeText(this, "Network is not available", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         String query = mEtQuery.getText().toString();
 
         AsyncHttpClient client = new AsyncHttpClient();
