@@ -27,7 +27,7 @@ import java.util.Date;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class SearchFilterFragment extends DialogFragment {
+public class SettingsFragment extends DialogFragment {
     private static SimpleDateFormat dateFormatter = new SimpleDateFormat("MMM dd, yyyy");
     private static final int REQUEST_DATE = 0;
 
@@ -40,8 +40,8 @@ public class SearchFilterFragment extends DialogFragment {
 
     private Date mBeginDate;
 
-    public static SearchFilterFragment newInstance() {
-        SearchFilterFragment frag = new SearchFilterFragment();
+    public static SettingsFragment newInstance() {
+        SettingsFragment frag = new SettingsFragment();
         return frag;
     }
 
@@ -61,7 +61,7 @@ public class SearchFilterFragment extends DialogFragment {
             LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        View v = inflater.inflate(R.layout.fragment_search_filter, container);
+        View v = inflater.inflate(R.layout.fragment_settings, container);
         ButterKnife.bind(this, v);
 
         final Date defaultDate = mBeginDate == null ? new Date() : mBeginDate;
@@ -70,7 +70,7 @@ public class SearchFilterFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 DatePickerFragment frag = DatePickerFragment.newInstance(defaultDate);
-                frag.setTargetFragment(SearchFilterFragment.this, REQUEST_DATE);
+                frag.setTargetFragment(SettingsFragment.this, REQUEST_DATE);
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 frag.show(fm, "DatePicker");
             }

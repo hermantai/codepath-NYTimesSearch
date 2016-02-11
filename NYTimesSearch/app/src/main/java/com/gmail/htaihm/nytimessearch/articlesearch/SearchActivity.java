@@ -17,10 +17,11 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.gmail.htaihm.nytimessearch.articleview.ArticleActivity;
 import com.gmail.htaihm.nytimessearch.BuildConfig;
 import com.gmail.htaihm.nytimessearch.R;
+import com.gmail.htaihm.nytimessearch.articleview.ArticleActivity;
 import com.gmail.htaihm.nytimessearch.helper.ErrorHandling;
+import com.gmail.htaihm.nytimessearch.helper.LogUtil;
 import com.gmail.htaihm.nytimessearch.helper.NetworkUtil;
 import com.gmail.htaihm.nytimessearch.model.Article;
 import com.gmail.htaihm.nytimessearch.repo.QueryPreferences;
@@ -31,7 +32,10 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,6 +43,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
+    private static final SimpleDateFormat dateFormatterForApi = new SimpleDateFormat("yyyyMMdd");
 
     @Bind(R.id.gvResults) GridView mGvResults;
     @Bind(R.id.pbSearch) ProgressBar mPbSearch;
@@ -123,10 +128,10 @@ public class SearchActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_search_filter:
-                SearchFilterFragment frag = SearchFilterFragment.newInstance();
+            case R.id.action_settings:
+                SettingsFragment frag = SettingsFragment.newInstance();
                 FragmentManager fm = getSupportFragmentManager();
-                frag.show(fm, "SearchFilterFragment");
+                frag.show(fm, "SettingsFragment");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -148,6 +153,44 @@ public class SearchActivity extends AppCompatActivity {
         params.put("page", 0);
         params.put("q", query);
 
+        long beginDateMillis = QueryPreferences.getFilterBeginDate(this);
+        if (beginDateMillis != 0) {
+            Date d = new Date(beginDateMillis);
+            params.put("begin_date", dateFormatterForApi.format(d));
+        }
+        String sortOrder = QueryPreferences.getFilterSortOrder(this);
+        if (sortOrder != null) {
+            sortOrder = sortOrder.toLowerCase();
+        }
+        if (TextUtils.equals("oldest", sortOrder) || TextUtils.equals("newest", sortOrder)) {
+            params.put("sort", sortOrder);
+        }
+
+        List<String> newsDeskValues = new ArrayList<>();
+        if (QueryPreferences.isFilterNewsDeskValueArts(this)) {
+            newsDeskValues.add("Arts");
+        }
+        if (QueryPreferences.isFilterNewsDeskValueFashionAndStyle(this)) {
+            newsDeskValues.add("Fashion & Style");
+        }
+        if (QueryPreferences.isFilterNewsDeskValueSports(this)) {
+            newsDeskValues.add("Sports");
+        }
+
+        if (!newsDeskValues.isEmpty()) {
+            StringBuilder sb = new StringBuilder("news_desk:(\"");
+            sb.append(newsDeskValues.get(0));
+            sb.append('"');
+
+            for (int i = 1; i < newsDeskValues.size(); i++) {
+                sb.append(" \"");
+                sb.append(newsDeskValues.get(i));
+                sb.append('"');
+            }
+            sb.append(')');
+            params.put("fq", sb.toString());
+        }
+
         if (BuildConfig.DEBUG) {
             Log.d(
                     TAG,
@@ -162,13 +205,12 @@ public class SearchActivity extends AppCompatActivity {
         client.get(url, params, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d(TAG, response.toString());
+                LogUtil.d(TAG, "Response: " + response.toString());
 
                 JSONArray articleJsonResults = null;
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    Log.d(TAG, "Json response: " + articleJsonResults.toString());
                     mAdapter.addAll(Article.fromJsonArray(articleJsonResults));
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -3,10 +3,10 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".articlesearch.SearchActivity">
     <item
-        android:id="@+id/action_search_filter"
+        android:id="@+id/action_settings"
         android:icon="@drawable/ic_search_filter"
         android:orderInCategory="1"
-        android:title="@string/action_search_filter"
+        android:title="@string/action_settings"
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/action_search"
         android:orderInCategory="2"
