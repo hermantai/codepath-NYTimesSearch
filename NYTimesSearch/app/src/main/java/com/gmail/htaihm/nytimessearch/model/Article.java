@@ -69,7 +69,7 @@ public class Article implements Parcelable {
         for (int x = 0; x < array.length(); x++) {
             try {
                 Article article = createArticle(array.getJSONObject(x));
-                Log.d(TAG, "Article created: %s" + article);
+                Log.d(TAG, "Article created: " + article);
                 results.add(article);
             } catch (JSONException je) {
                 Log.e(TAG, "Error parsing articles", je);

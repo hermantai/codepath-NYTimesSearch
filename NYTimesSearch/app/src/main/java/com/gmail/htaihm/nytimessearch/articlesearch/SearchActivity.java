@@ -1,6 +1,10 @@
 package com.gmail.htaihm.nytimessearch.articlesearch;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -53,8 +57,31 @@ public class SearchActivity extends AppCompatActivity {
     @Bind(R.id.pbSearch) ProgressBar mPbSearch;
 
     private ArrayList<Article> mArticles;
+    private RecyclerView.Adapter<ArticleViewHolder> mAdapter;
+    private EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
+    private BroadcastReceiver mNetworkChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "Network changed: " + intent);
+            if (mEndlessRecyclerViewScrollListener != null) {
+                mEndlessRecyclerViewScrollListener.enableLoadMore(
+                        NetworkUtil.isNetworkAvailable(SearchActivity.this));
+            }
+        }
+    };
 
-    RecyclerView.Adapter<ArticleViewHolder> mAdapter;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetworkChangeReceiver, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(mNetworkChangeReceiver);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,12 +103,14 @@ public class SearchActivity extends AppCompatActivity {
                 3, StaggeredGridLayoutManager.VERTICAL);
         mRvResults.setLayoutManager(manager);
 
-        mRvResults.addOnScrollListener(new EndlessRecyclerViewScrollListener(manager) {
+        mEndlessRecyclerViewScrollListener = new EndlessRecyclerViewScrollListener(manager) {
             @Override
             protected void onLoadMore(int page, int totalItemsCount) {
                 fetchArticles(QueryPreferences.getQuery(SearchActivity.this), page);
             }
-        });
+        };
+
+        mRvResults.addOnScrollListener(mEndlessRecyclerViewScrollListener);
     }
 
     @Override
@@ -213,13 +242,19 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                    List<Article> newArticles = Article.fromJsonArray(articleJsonResults);
+                    Log.d(TAG, "Loaded " + newArticles.size() + " items for page " + pageNumber);
+                    if (newArticles.size() == 0) {
+                        mEndlessRecyclerViewScrollListener.notifyNoMoreItems();
+                    } else {
+                        mEndlessRecyclerViewScrollListener.enableLoadMore(true);
+                    }
                     if (pageNumber == 0) {
                         mArticles.clear();
-                        mArticles.addAll(Article.fromJsonArray(articleJsonResults));
+                        mArticles.addAll(newArticles);
                         mAdapter.notifyDataSetChanged();
                     } else {
                         int nextItemPosition = mArticles.size();
-                        List<Article> newArticles = Article.fromJsonArray(articleJsonResults);
                         mArticles.addAll(newArticles);
                         mAdapter.notifyItemRangeInserted(nextItemPosition, newArticles.size());
                     }
@@ -232,6 +267,8 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onFailure(
                     int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                mEndlessRecyclerViewScrollListener.notifyLoadMoreFailed();
+
                 ErrorHandling.handleError(
                         SearchActivity.this,
                         TAG,

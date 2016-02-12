@@ -50,4 +50,15 @@ public class ArticleMultimedia {
     public void setHeight(int height) {
         this.height = height;
     }
+
+    @Override
+    public String toString() {
+        return "ArticleMultimedia{" +
+                "mUrl='" + mUrl + '\'' +
+                ", mType='" + mType + '\'' +
+                ", mSubtype='" + mSubtype + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                '}';
+    }
 }

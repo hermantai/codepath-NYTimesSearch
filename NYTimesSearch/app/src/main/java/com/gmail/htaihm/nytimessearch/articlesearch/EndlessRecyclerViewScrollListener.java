@@ -17,6 +17,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     private boolean loading = true;
     // Sets the starting page index
     private int startingPageIndex = 0;
+    private boolean mLoadMoreEnabled = true;
 
     RecyclerView.LayoutManager mLayoutManager;
 
@@ -52,6 +53,9 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // but first we check if we are waiting for the previous load to finish.
     @Override
     public void onScrolled(RecyclerView view, int dx, int dy) {
+        if (!mLoadMoreEnabled) {
+            return;
+        }
         int lastVisibleItemPosition = 0;
         int totalItemCount = mLayoutManager.getItemCount();
 
@@ -81,8 +85,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         // changed, if so we conclude it has finished loading and update the current page
         // number and total item count.
         if (loading && (totalItemCount > previousTotalItemCount)) {
-            loading = false;
-            previousTotalItemCount = totalItemCount;
+            loadingStopped();
         }
 
         // If it isn’t currently loading, we check to see if we have breached
@@ -94,6 +97,30 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
             onLoadMore(currentPage, totalItemCount);
             loading = true;
         }
+    }
+
+    public void notifyLoadMoreFailed(){
+        if (loading) {
+            loadingStopped();
+            currentPage--;
+        }
+    }
+
+    public void notifyNoMoreItems() {
+        if (loading) {
+            loadingStopped();
+            currentPage--;
+        }
+        enableLoadMore(false);
+    }
+
+    public void enableLoadMore(boolean enabled) {
+        mLoadMoreEnabled = enabled;
+    }
+
+    private void loadingStopped() {
+        loading = false;
+        previousTotalItemCount = mLayoutManager.getItemCount();
     }
 
     // Defines the process for actually loading more data based on page
