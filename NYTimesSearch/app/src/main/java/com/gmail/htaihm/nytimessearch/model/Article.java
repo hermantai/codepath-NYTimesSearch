@@ -4,35 +4,47 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Article implements Parcelable {
     private final static String TAG = "Article";
 
     private String mWebUrl;
-    private String mHeadline;
     private String mThumbnail;
+    private String mHeadlingString;
+    private ArticleHeadline mHeadline;
+    private List<ArticleMultimedia> mMultimedia = new ArrayList<>();
 
-    public Article(JSONObject jsonObject) {
-        try {
-            this.mWebUrl = jsonObject.getString("web_url");
-            this.mHeadline = jsonObject.getJSONObject("headline").getString("main");
-
-            JSONArray multimedia = jsonObject.getJSONArray("multimedia");
-
-            if (multimedia.length() > 0) {
-                JSONObject multimediaJson = multimedia.getJSONObject(0);
-                mThumbnail = "http://www.nytimes.com/" + multimediaJson.getString("url");
-            } else {
-                mThumbnail = "";
-            }
-        } catch (JSONException je) {
-            Log.e(TAG, "Error parsing an Article", je);
+    /**
+     * Should be called right after an Article is created.
+     */
+    private void init() {
+        if (mHeadline != null) {
+            mHeadlingString = mHeadline.getMain();
         }
+
+        for (ArticleMultimedia multimedia : mMultimedia) {
+            if (multimedia.getSubtype().equals("thumbnail")) {
+                mThumbnail = "http://www.nytimes.com/" + multimedia.getUrl();
+            }
+        }
+    }
+
+    public static Article createArticle(JSONObject jsonObject) {
+        Gson gson = new GsonBuilder()
+                .setFieldNamingStrategy(new AndroidFieldNamingStrategy())
+                .create();
+        Article article = gson.fromJson(jsonObject.toString(), Article.class);
+        article.init();
+        return article;
     }
 
     public String getWebUrl() {
@@ -40,7 +52,7 @@ public class Article implements Parcelable {
     }
 
     public String getHeadline() {
-        return mHeadline;
+        return mHeadlingString;
     }
 
     public String getThumbnail() {
@@ -52,7 +64,7 @@ public class Article implements Parcelable {
 
         for (int x = 0; x < array.length(); x++) {
             try {
-                results.add(new Article(array.getJSONObject(x)));
+                results.add(createArticle(array.getJSONObject(x)));
             } catch (JSONException je) {
                 Log.e(TAG, "Error parsing articles", je);
             }
@@ -69,23 +81,24 @@ public class Article implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.mWebUrl);
-        dest.writeString(this.mHeadline);
+        dest.writeString(this.mHeadlingString);
         dest.writeString(this.mThumbnail);
+    }
+
+    public Article() {
     }
 
     protected Article(Parcel in) {
         this.mWebUrl = in.readString();
-        this.mHeadline = in.readString();
+        this.mHeadlingString = in.readString();
         this.mThumbnail = in.readString();
     }
 
     public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
-        @Override
         public Article createFromParcel(Parcel source) {
             return new Article(source);
         }
 
-        @Override
         public Article[] newArray(int size) {
             return new Article[size];
         }
