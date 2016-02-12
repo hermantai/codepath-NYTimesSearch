@@ -5,18 +5,22 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.gmail.htaihm.nytimessearch.BuildConfig;
 import com.gmail.htaihm.nytimessearch.R;
 import com.gmail.htaihm.nytimessearch.articleview.ArticleActivity;
@@ -45,12 +49,12 @@ public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
     private static final SimpleDateFormat dateFormatterForApi = new SimpleDateFormat("yyyyMMdd");
 
-    @Bind(R.id.gvResults) GridView mGvResults;
+    @Bind(R.id.rvResults) RecyclerView mRvResults;
     @Bind(R.id.pbSearch) ProgressBar mPbSearch;
 
     private ArrayList<Article> mArticles;
 
-    ArticleArrayAdapter mAdapter;
+    RecyclerView.Adapter<ArticleViewHolder> mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,20 +70,11 @@ public class SearchActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mArticles = new ArrayList<>();
-        mAdapter = new ArticleArrayAdapter(this, mArticles);
-        mGvResults.setAdapter(mAdapter);
-
-        mGvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // create an intent to display the article
-                Article article = mAdapter.getItem(position);
-                Intent i = ArticleActivity.newIntent(SearchActivity.this, article);
-
-                // launch the activity
-                startActivity(i);
-            }
-        });
+        mAdapter = new ArticlesAdapter();
+        mRvResults.setAdapter(mAdapter);
+        StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(
+                3, StaggeredGridLayoutManager.VERTICAL);
+        mRvResults.setLayoutManager(manager);
     }
 
     @Override
@@ -211,7 +206,9 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    mAdapter.addAll(Article.fromJsonArray(articleJsonResults));
+                    mArticles.clear();
+                    mArticles.addAll(Article.fromJsonArray(articleJsonResults));
+                    mAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -238,10 +235,66 @@ public class SearchActivity extends AppCompatActivity {
     private void setUiLoading(boolean isLoading) {
         if (isLoading) {
             mPbSearch.setVisibility(View.VISIBLE);
-            mGvResults.setVisibility(View.GONE);
         } else {
             mPbSearch.setVisibility(View.GONE);
-            mGvResults.setVisibility(View.VISIBLE);
+        }
+    }
+
+    class ArticleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        @Bind(R.id.ivImage) ImageView mIvImage;
+        @Bind(R.id.tvTitle) TextView mTvTitle;
+
+        Article mArticle;
+
+        public ArticleViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        private void bindItem(Article article) {
+            // clear not recycled image from convertView from last time
+            mArticle = article;
+
+            mIvImage.setImageResource(0);
+            mTvTitle.setText(article.getHeadline());
+
+            // populate the thumbnail image
+            // remote download the image in the background
+
+            String thumbnail = article.getThumbnail();
+
+            if (!TextUtils.isEmpty(thumbnail)) {
+                Glide.with(SearchActivity.this)
+                        .load(thumbnail)
+                        .into(mIvImage);
+            }
+        }
+
+        @Override
+        public void onClick(View v) {
+            // create an intent to display the article
+            Intent i = ArticleActivity.newIntent(SearchActivity.this, mArticle);
+            // launch the activity
+            startActivity(i);
+        }
+    }
+
+    class ArticlesAdapter extends RecyclerView.Adapter<ArticleViewHolder> {
+        @Override
+        public ArticleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = getLayoutInflater().inflate(R.layout.item_article_result, parent, false);
+            return new ArticleViewHolder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(ArticleViewHolder holder, int position) {
+            holder.bindItem(mArticles.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return mArticles.size();
         }
     }
 }
