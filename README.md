@@ -46,6 +46,9 @@ The following **additional** features are implemented:
     DatePicker without a button, and the button should naturaly show the picked
     date anyway)
   * "Reset" button for clearing filters.
+  * Fix the issue of EndlessRecyclerViewScrollListener does not load more items
+    if the network is interrupted or an API call has an error because it is
+    stuck at "loading" state.
 
 ## Video Walkthrough
 

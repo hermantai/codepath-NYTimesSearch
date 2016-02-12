@@ -116,6 +116,9 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
     public void enableLoadMore(boolean enabled) {
         mLoadMoreEnabled = enabled;
+        if (!enabled) {
+            loading = false;
+        }
     }
 
     private void loadingStopped() {
