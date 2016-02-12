@@ -35,6 +35,13 @@ public class QueryPreferences {
                 .apply();
     }
 
+    public static void clearFilterBeginDate(Context context) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .remove(PREF_FILTER_BEGIN_DATE)
+                .apply();
+    }
+
     public static String getFilterSortOrder(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
                 .getString(PREF_FILTER_SORT_ORDER, null);

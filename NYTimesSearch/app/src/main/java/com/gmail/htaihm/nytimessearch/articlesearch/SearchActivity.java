@@ -75,6 +75,13 @@ public class SearchActivity extends AppCompatActivity {
         StaggeredGridLayoutManager manager = new StaggeredGridLayoutManager(
                 3, StaggeredGridLayoutManager.VERTICAL);
         mRvResults.setLayoutManager(manager);
+
+        mRvResults.addOnScrollListener(new EndlessRecyclerViewScrollListener(manager) {
+            @Override
+            protected void onLoadMore(int page, int totalItemsCount) {
+                fetchArticles(QueryPreferences.getQuery(SearchActivity.this), page);
+            }
+        });
     }
 
     @Override
@@ -88,7 +95,7 @@ public class SearchActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                fetchArticles(query);
+                fetchArticles(query, 0);
                 // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
@@ -134,7 +141,7 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private void fetchArticles(String query) {
+    private void fetchArticles(String query, final int pageNumber) {
         if (!NetworkUtil.isNetworkAvailable(this)) {
             Toast.makeText(this, "Network is not available", Toast.LENGTH_LONG).show();
             return;
@@ -145,7 +152,7 @@ public class SearchActivity extends AppCompatActivity {
 
         RequestParams params = new RequestParams();
         params.put("api-key", "cb6d7de957f77c1d1804cd599b8ccdb7:14:74323340");
-        params.put("page", 0);
+        params.put("page", pageNumber);
         params.put("q", query);
 
         long beginDateMillis = QueryPreferences.getFilterBeginDate(this);
@@ -206,9 +213,16 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    mArticles.clear();
-                    mArticles.addAll(Article.fromJsonArray(articleJsonResults));
-                    mAdapter.notifyDataSetChanged();
+                    if (pageNumber == 0) {
+                        mArticles.clear();
+                        mArticles.addAll(Article.fromJsonArray(articleJsonResults));
+                        mAdapter.notifyDataSetChanged();
+                    } else {
+                        int nextItemPosition = mArticles.size();
+                        List<Article> newArticles = Article.fromJsonArray(articleJsonResults);
+                        mArticles.addAll(newArticles);
+                        mAdapter.notifyItemRangeInserted(nextItemPosition, newArticles.size());
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

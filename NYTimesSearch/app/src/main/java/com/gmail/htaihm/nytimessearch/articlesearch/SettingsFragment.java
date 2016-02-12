@@ -37,6 +37,7 @@ public class SettingsFragment extends DialogFragment {
     @Bind(R.id.cbFashionAndStyle) CheckBox mCbFashionAndStyle;
     @Bind(R.id.cbSports) CheckBox mCbSports;
     @Bind(R.id.btnSave) Button mBtnSave;
+    @Bind(R.id.btnReset) Button mBtnReset;
 
     private Date mBeginDate;
 
@@ -109,7 +110,9 @@ public class SettingsFragment extends DialogFragment {
             public void onClick(View v) {
                 // mBeingDate is set whenever a Date is picked, so we don't have to pull from the
                 // button to get the value.
-                if (mBeginDate != null) {
+                if (mBeginDate == null) {
+                    QueryPreferences.clearFilterBeginDate(context);
+                } else {
                     QueryPreferences.setFilterBeginDate(context, mBeginDate.getTime());
                 }
 
@@ -120,6 +123,20 @@ public class SettingsFragment extends DialogFragment {
                         context, mCbFashionAndStyle.isChecked());
                 QueryPreferences.setIsFilterNewsDeskValueSports(context, mCbSports.isChecked());
                 dismiss();
+            }
+        });
+
+        mBtnReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBeginDate = null;
+                mBtnDatePicker.setText(getString(R.string.button_pick_date));
+
+                mSSortOrder.setSelection(0);
+
+                mCbArts.setChecked(false);
+                mCbFashionAndStyle.setChecked(false);
+                mCbSports.setChecked(false);
             }
         });
 

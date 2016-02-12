@@ -7,11 +7,13 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Article implements Parcelable {
@@ -22,13 +24,15 @@ public class Article implements Parcelable {
     private String mHeadlingString;
     private ArticleHeadline mHeadline;
     private List<ArticleMultimedia> mMultimedia = new ArrayList<>();
+    private Date mPubDate;
+    private String mNewsDesk;
 
     /**
      * Should be called right after an Article is created.
      */
     private void init() {
         if (mHeadline != null) {
-            mHeadlingString = mHeadline.getMain();
+            mHeadlingString = StringEscapeUtils.unescapeHtml4(mHeadline.getMain());
         }
 
         for (ArticleMultimedia multimedia : mMultimedia) {
@@ -64,13 +68,36 @@ public class Article implements Parcelable {
 
         for (int x = 0; x < array.length(); x++) {
             try {
-                results.add(createArticle(array.getJSONObject(x)));
+                Article article = createArticle(array.getJSONObject(x));
+                Log.d(TAG, "Article created: %s" + article);
+                results.add(article);
             } catch (JSONException je) {
                 Log.e(TAG, "Error parsing articles", je);
             }
         }
 
         return results;
+    }
+
+    public Date getPubDate() {
+        return mPubDate;
+    }
+
+    public String getNewsDesk() {
+        return mNewsDesk;
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "mWebUrl='" + mWebUrl + '\'' +
+                ", mThumbnail='" + mThumbnail + '\'' +
+                ", mHeadlingString='" + mHeadlingString + '\'' +
+                ", mHeadline=" + mHeadline +
+                ", mMultimedia=" + mMultimedia +
+                ", mPubDate=" + mPubDate +
+                ", mNewsDesk='" + mNewsDesk + '\'' +
+                '}';
     }
 
     @Override

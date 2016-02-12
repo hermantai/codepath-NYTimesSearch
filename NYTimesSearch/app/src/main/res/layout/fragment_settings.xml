@@ -80,5 +80,12 @@
         android:layout_column="1"
         android:text="@string/button_save"
         android:id="@+id/btnSave"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:layout_column="1"
+        android:text="@string/button_reset"
+        android:id="@+id/btnReset"/>
 
 </GridLayout>

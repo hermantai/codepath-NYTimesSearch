@@ -12,6 +12,7 @@
     <string name="news_desk_value_arts">Arts</string>
     <string name="news_desk_value_fashion_and_style">Fashion &amp; Style</string>
     <string name="news_desk_value_sports">Sports</string>
+    <string name="button_reset">Reset</string>
     <string-array name="article_search_filter_sort_order_array">
         <item>Relevance</item>
         <item>Newest</item>
