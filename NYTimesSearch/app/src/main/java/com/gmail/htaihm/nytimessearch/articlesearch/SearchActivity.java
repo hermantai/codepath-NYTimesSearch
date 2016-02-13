@@ -57,7 +57,7 @@ public class SearchActivity extends AppCompatActivity {
     @Bind(R.id.pbSearch) ProgressBar mPbSearch;
 
     private ArrayList<Article> mArticles;
-    private RecyclerView.Adapter<ArticleViewHolder> mAdapter;
+    private RecyclerView.Adapter<RecyclerView.ViewHolder> mAdapter;
     private EndlessRecyclerViewScrollListener mEndlessRecyclerViewScrollListener;
     private BroadcastReceiver mNetworkChangeReceiver = new BroadcastReceiver() {
         @Override
@@ -89,7 +89,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        
+
         setUpViews();
     }
 
@@ -125,7 +125,8 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 fetchArticles(query, 0);
-                // workaround to avoid issues with some emulators and keyboard devices firing twice if a keyboard enter is used
+                // workaround to avoid issues with some emulators and keyboard devices firing
+                // twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
                 searchItem.collapseActionView();
@@ -231,7 +232,7 @@ public class SearchActivity extends AppCompatActivity {
                             params));
         }
 
-        setUiLoading(true);
+        showLoading(true);
 
         client.get(url, params, new JsonHttpResponseHandler(){
             @Override
@@ -261,12 +262,15 @@ public class SearchActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                setUiLoading(false);
+                showLoading(false);
             }
 
             @Override
             public void onFailure(
-                    int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    int statusCode,
+                    Header[] headers,
+                    Throwable throwable,
+                    JSONObject errorResponse) {
                 mEndlessRecyclerViewScrollListener.notifyLoadMoreFailed();
 
                 ErrorHandling.handleError(
@@ -278,12 +282,12 @@ public class SearchActivity extends AppCompatActivity {
                                 throwable,
                                 errorResponse),
                         throwable);
-                setUiLoading(false);
+                showLoading(false);
             }
         });
     }
 
-    private void setUiLoading(boolean isLoading) {
+    private void showLoading(boolean isLoading) {
         if (isLoading) {
             mPbSearch.setVisibility(View.VISIBLE);
         } else {
@@ -331,16 +335,75 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    class ArticlesAdapter extends RecyclerView.Adapter<ArticleViewHolder> {
-        @Override
-        public ArticleViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = getLayoutInflater().inflate(R.layout.item_article_result, parent, false);
-            return new ArticleViewHolder(v);
+    class ArticleViewHolderWithoutImage extends RecyclerView.ViewHolder
+            implements View.OnClickListener{
+        @Bind(R.id.tvTitle) TextView mTvTitle;
+
+        Article mArticle;
+
+        public ArticleViewHolderWithoutImage(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        private void bindItem(Article article) {
+            // clear not recycled image from convertView from last time
+            mArticle = article;
+            mTvTitle.setText(article.getHeadline());
         }
 
         @Override
-        public void onBindViewHolder(ArticleViewHolder holder, int position) {
-            holder.bindItem(mArticles.get(position));
+        public void onClick(View v) {
+            // create an intent to display the article
+            Intent i = ArticleActivity.newIntent(SearchActivity.this, mArticle);
+            // launch the activity
+            startActivity(i);
+        }
+    }
+
+    class ArticlesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private static final int VIEW_TYPE_TEXT_ONLY = 0;
+        private static final int VIEW_TYPE_TEXT_AND_IMAGE = 1;
+
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            switch (viewType) {
+                case VIEW_TYPE_TEXT_AND_IMAGE:
+                    View v = getLayoutInflater().inflate(R.layout.item_article_result, parent,
+                            false);
+                    return new ArticleViewHolder(v);
+                default:
+                    View v2 = getLayoutInflater().inflate(
+                            R.layout.item_article_result_no_image, parent, false);
+                    return new ArticleViewHolderWithoutImage(v2);
+            }
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            int viewType = holder.getItemViewType();
+            switch (viewType) {
+                case VIEW_TYPE_TEXT_AND_IMAGE:
+                    ArticleViewHolder vh1 = (ArticleViewHolder) holder;
+                    vh1.bindItem(mArticles.get(position));
+                    break;
+                default:
+                    ArticleViewHolderWithoutImage vh2 = (ArticleViewHolderWithoutImage) holder;
+                    vh2.bindItem(mArticles.get(position));
+                    break;
+            }
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            Article article = mArticles.get(position);
+
+            if (TextUtils.isEmpty(article.getThumbnail())) {
+                return VIEW_TYPE_TEXT_ONLY;
+            } else {
+                return VIEW_TYPE_TEXT_AND_IMAGE;
+            }
         }
 
         @Override
