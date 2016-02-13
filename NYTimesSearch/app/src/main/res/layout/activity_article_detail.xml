@@ -58,6 +58,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Abstract"
+                android:textStyle="bold"
+                />
+            <TextView
+                android:id="@+id/tvDetailAbstract"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
         </android.support.v7.widget.GridLayout>
     </LinearLayout>
 </ScrollView>

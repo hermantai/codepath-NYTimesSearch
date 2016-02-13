@@ -8,6 +8,7 @@ public class LogUtil {
     // <a href="http://stackoverflow.com/questions/8888654/android-set-max-length-of-logcat-messages">
     // this</a>.
     public static final int MAX_LINE_LENGTH = 1000;
+
     /**
      * Logs with Log.d with the msg chopped in chunks so each chunk has at most
      * {@code MAX_LINE_LENGTH} characters.
@@ -21,5 +22,9 @@ public class LogUtil {
             Log.d(tag, msg.substring(start, n));
             start += MAX_LINE_LENGTH;
         }
+    }
+
+    public static void logForDemo(String msg){
+        d("ForDemo", msg);
     }
 }

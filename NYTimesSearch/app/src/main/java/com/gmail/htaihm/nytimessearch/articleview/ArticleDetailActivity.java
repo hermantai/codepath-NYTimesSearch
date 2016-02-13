@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +25,7 @@ public class ArticleDetailActivity extends AppCompatActivity {
     @Bind(R.id.tvDetailGoUrl) TextView mTvGoUrl;
     @Bind(R.id.tvDetailPubDate) TextView mTvDetailPubDate;
     @Bind(R.id.tvDetailNewsDesk) TextView mTvDetailNewsDesk;
+    @Bind(R.id.tvDetailAbstract) TextView mTvDetailAbstract;
 
     public static Intent newIntent(Context context, Article article) {
         Intent i = new Intent(context, ArticleDetailActivity.class);
@@ -46,18 +46,13 @@ public class ArticleDetailActivity extends AppCompatActivity {
 
         ArticleMultimedia largestImage = null;
         for (ArticleMultimedia multimedia : article.getMultimedia()) {
-            Log.d("DEBUG", "multi: " + multimedia);
             if (multimedia.getType().equalsIgnoreCase("image")) {
                 if (largestImage == null || multimedia.getWidth() > largestImage.getWidth()) {
-                    Log.d("DEBUG", "i am in");
                     largestImage = multimedia;
                 }
             }
         }
         if (largestImage != null) {
-            Log.d("DEBUG", "load image: " + article.getMultimediaUrl(largestImage));
-            Log.d("DEBUG", "image: " + largestImage);
-
             Glide.with(this)
                     .load(article.getMultimediaUrl(largestImage))
                     .into(mIvDetailImage);
@@ -90,5 +85,8 @@ public class ArticleDetailActivity extends AppCompatActivity {
             mTvDetailNewsDesk.setText(article.getNewsDesk());
         }
 
+        if (article.getAbstract() != null) {
+            mTvDetailAbstract.setText(article.getAbstract());
+        }
     }
 }

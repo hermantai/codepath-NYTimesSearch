@@ -255,6 +255,18 @@ public class SearchActivity extends AppCompatActivity {
                             seenArticles.add(article.getWebUrl());
                             newArticles.add(article);
                         }
+                        if (article.getAbstract() != null) {
+                            LogUtil.logForDemo(String.format("article %s has abstract", article
+                                    .getHeadline()));
+                        }
+                        if (article.getMultimedia().size() >= 2) {
+                            LogUtil.logForDemo(
+                                    String.format(
+                                            "article %s has more than one " +
+                                            "multimedia: %s",
+                                    article.getHeadline(),
+                                    article.getMultimedia()));
+                        }
                     }
 
                     Log.d(TAG, "Loaded " + newArticles.size() + " items for page " + pageNumber);
