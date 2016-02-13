@@ -29,12 +29,11 @@
         <android.support.v7.widget.GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:columnCount="2">
+            app:columnCount="1">
             <TextView
                 android:id="@+id/tvDetailGoUrl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_columnSpan="2"
                 android:textColor="@color/link_color"
                 />
             <TextView
@@ -47,7 +46,6 @@
                 android:id="@+id/tvDetailPubDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="3dp"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -59,7 +57,6 @@
                 android:id="@+id/tvDetailNewsDesk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="3dp"
                 />
         </android.support.v7.widget.GridLayout>
     </LinearLayout>

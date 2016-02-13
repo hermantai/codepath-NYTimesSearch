@@ -26,6 +26,7 @@ public class Article implements Parcelable {
     private List<ArticleMultimedia> mMultimedia = new ArrayList<>();
     private Date mPubDate;
     private String mNewsDesk;
+    private String mAbstract;
 
     /**
      * Should be called right after an Article is created.
@@ -95,6 +96,10 @@ public class Article implements Parcelable {
         return mNewsDesk;
     }
 
+    public String getAbstract() {
+        return mAbstract;
+    }
+
     @Override
     public String toString() {
         return "Article{" +
@@ -105,10 +110,8 @@ public class Article implements Parcelable {
                 ", mMultimedia=" + mMultimedia +
                 ", mPubDate=" + mPubDate +
                 ", mNewsDesk='" + mNewsDesk + '\'' +
+                ", mAbstract='" + mAbstract + '\'' +
                 '}';
-    }
-
-    public Article() {
     }
 
     @Override
@@ -124,6 +127,7 @@ public class Article implements Parcelable {
         dest.writeTypedList(mMultimedia);
         dest.writeLong(mPubDate != null ? mPubDate.getTime() : -1);
         dest.writeString(this.mNewsDesk);
+        dest.writeString(this.mAbstract);
     }
 
     protected Article(Parcel in) {
@@ -134,6 +138,7 @@ public class Article implements Parcelable {
         long tmpMPubDate = in.readLong();
         this.mPubDate = tmpMPubDate == -1 ? null : new Date(tmpMPubDate);
         this.mNewsDesk = in.readString();
+        this.mAbstract = in.readString();
     }
 
     public static final Creator<Article> CREATOR = new Creator<Article>() {
