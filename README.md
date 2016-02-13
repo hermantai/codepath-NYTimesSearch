@@ -2,7 +2,7 @@
 
 **New York Times Article Search** is an android app that allows a user to search for images on web using simple filters. The app utilizes [New York Times Search API](http://developer.nytimes.com/docs/read/article_search_api_v2).
 
-Time spent: **9.75** hours spent in total
+Time spent: **11** hours spent in total
 
 ## User Stories
 

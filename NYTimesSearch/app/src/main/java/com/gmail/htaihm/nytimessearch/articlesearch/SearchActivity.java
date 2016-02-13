@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.gmail.htaihm.nytimessearch.BuildConfig;
 import com.gmail.htaihm.nytimessearch.R;
-import com.gmail.htaihm.nytimessearch.articleview.ArticleActivity;
+import com.gmail.htaihm.nytimessearch.articleview.ArticleDetailActivity;
 import com.gmail.htaihm.nytimessearch.helper.ErrorHandling;
 import com.gmail.htaihm.nytimessearch.helper.LogUtil;
 import com.gmail.htaihm.nytimessearch.helper.NetworkUtil;
@@ -329,7 +329,7 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // create an intent to display the article
-            Intent i = ArticleActivity.newIntent(SearchActivity.this, mArticle);
+            Intent i = ArticleDetailActivity.newIntent(SearchActivity.this, mArticle);
             // launch the activity
             startActivity(i);
         }
@@ -356,7 +356,7 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             // create an intent to display the article
-            Intent i = ArticleActivity.newIntent(SearchActivity.this, mArticle);
+            Intent i = ArticleDetailActivity.newIntent(SearchActivity.this, mArticle);
             // launch the activity
             startActivity(i);
         }

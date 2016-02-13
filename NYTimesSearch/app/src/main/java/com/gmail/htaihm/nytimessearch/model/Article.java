@@ -37,9 +37,13 @@ public class Article implements Parcelable {
 
         for (ArticleMultimedia multimedia : mMultimedia) {
             if (multimedia.getSubtype().equals("thumbnail")) {
-                mThumbnail = "http://www.nytimes.com/" + multimedia.getUrl();
+                mThumbnail = getMultimediaUrl(multimedia);
             }
         }
+    }
+
+    public String getMultimediaUrl(ArticleMultimedia multimedia) {
+        return "http://www.nytimes.com/" + multimedia.getUrl();
     }
 
     public static Article createArticle(JSONObject jsonObject) {
@@ -79,6 +83,10 @@ public class Article implements Parcelable {
         return results;
     }
 
+    public List<ArticleMultimedia> getMultimedia() {
+        return mMultimedia;
+    }
+
     public Date getPubDate() {
         return mPubDate;
     }
@@ -100,6 +108,9 @@ public class Article implements Parcelable {
                 '}';
     }
 
+    public Article() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -108,20 +119,24 @@ public class Article implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.mWebUrl);
-        dest.writeString(this.mHeadlingString);
         dest.writeString(this.mThumbnail);
-    }
-
-    public Article() {
+        dest.writeString(this.mHeadlingString);
+        dest.writeTypedList(mMultimedia);
+        dest.writeLong(mPubDate != null ? mPubDate.getTime() : -1);
+        dest.writeString(this.mNewsDesk);
     }
 
     protected Article(Parcel in) {
         this.mWebUrl = in.readString();
-        this.mHeadlingString = in.readString();
         this.mThumbnail = in.readString();
+        this.mHeadlingString = in.readString();
+        this.mMultimedia = in.createTypedArrayList(ArticleMultimedia.CREATOR);
+        long tmpMPubDate = in.readLong();
+        this.mPubDate = tmpMPubDate == -1 ? null : new Date(tmpMPubDate);
+        this.mNewsDesk = in.readString();
     }
 
-    public static final Parcelable.Creator<Article> CREATOR = new Parcelable.Creator<Article>() {
+    public static final Creator<Article> CREATOR = new Creator<Article>() {
         public Article createFromParcel(Parcel source) {
             return new Article(source);
         }

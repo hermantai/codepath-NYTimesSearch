@@ -13,11 +13,11 @@ import android.widget.ProgressBar;
 import com.gmail.htaihm.nytimessearch.R;
 import com.gmail.htaihm.nytimessearch.model.Article;
 
-public class ArticleActivity extends AppCompatActivity {
+public class ArticleWebViewActivity extends AppCompatActivity {
     private static final String INTENT_EXTRA_ARTICLE = "com.gmail.htaihm.nytimessearch.article";
 
     public static Intent newIntent(Context context, Article article) {
-        Intent i = new Intent(context, ArticleActivity.class);
+        Intent i = new Intent(context, ArticleWebViewActivity.class);
         i.putExtra(INTENT_EXTRA_ARTICLE, article);
 
         return i;
@@ -26,9 +26,10 @@ public class ArticleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_article);
+        setContentView(R.layout.activity_article_web_view);
 
-        final ProgressBar pbLoadingProgressBar = (ProgressBar) findViewById(R.id.pbLoadingProgressBar);
+        final ProgressBar pbLoadingProgressBar = (ProgressBar) findViewById(
+                R.id.pbLoadingProgressBar);
         pbLoadingProgressBar.setMax(100);  // WebChromeClient reports in range 0-100
 
         Article article = getIntent().getParcelableExtra(INTENT_EXTRA_ARTICLE);

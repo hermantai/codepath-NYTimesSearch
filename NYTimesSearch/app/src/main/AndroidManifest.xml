@@ -22,9 +22,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".articleview.ArticleActivity"
+            android:name=".articleview.ArticleWebViewActivity"
             android:label="@string/title_activity_article"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+        </activity>
+        <activity android:name=".articleview.ArticleDetailActivity">
         </activity>
     </application>
 

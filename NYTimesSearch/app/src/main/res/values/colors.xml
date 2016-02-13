@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="item_article_result_border">#E0E0E0</color>
+    <color name="link_color">#0000FF</color>
 </resources>

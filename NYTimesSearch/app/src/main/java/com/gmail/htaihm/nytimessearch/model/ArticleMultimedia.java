@@ -1,6 +1,9 @@
 package com.gmail.htaihm.nytimessearch.model;
 
-public class ArticleMultimedia {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ArticleMultimedia implements Parcelable {
     private String mUrl;
     private String mType;
     private String mSubtype;
@@ -61,4 +64,38 @@ public class ArticleMultimedia {
                 ", height=" + height +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.mUrl);
+        dest.writeString(this.mType);
+        dest.writeString(this.mSubtype);
+        dest.writeInt(this.width);
+        dest.writeInt(this.height);
+    }
+
+    protected ArticleMultimedia(Parcel in) {
+        this.mUrl = in.readString();
+        this.mType = in.readString();
+        this.mSubtype = in.readString();
+        this.width = in.readInt();
+        this.height = in.readInt();
+    }
+
+    public static final Parcelable.Creator<ArticleMultimedia> CREATOR = new Parcelable
+            .Creator<ArticleMultimedia>() {
+        public ArticleMultimedia createFromParcel(Parcel source) {
+            return new ArticleMultimedia(source);
+        }
+
+        public ArticleMultimedia[] newArray(int size) {
+            return new ArticleMultimedia[size];
+        }
+    };
 }
