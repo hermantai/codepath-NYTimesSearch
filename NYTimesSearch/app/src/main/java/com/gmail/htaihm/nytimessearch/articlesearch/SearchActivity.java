@@ -43,7 +43,9 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -69,6 +71,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
     };
+    private Set<String> seenArticles = new HashSet<>();
 
     @Override
     protected void onStart() {
@@ -176,6 +179,9 @@ public class SearchActivity extends AppCompatActivity {
             Toast.makeText(this, "Network is not available", Toast.LENGTH_LONG).show();
             return;
         }
+        if (pageNumber == 0) {
+            seenArticles.clear();
+        }
 
         AsyncHttpClient client = new AsyncHttpClient();
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
@@ -243,7 +249,14 @@ public class SearchActivity extends AppCompatActivity {
 
                 try {
                     articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                    List<Article> newArticles = Article.fromJsonArray(articleJsonResults);
+                    List<Article> newArticles = new ArrayList<Article>();
+                    for (Article article : Article.fromJsonArray(articleJsonResults)) {
+                        if (!seenArticles.contains(article.getWebUrl())){
+                            seenArticles.add(article.getWebUrl());
+                            newArticles.add(article);
+                        }
+                    }
+
                     Log.d(TAG, "Loaded " + newArticles.size() + " items for page " + pageNumber);
                     if (newArticles.size() == 0) {
                         mEndlessRecyclerViewScrollListener.notifyNoMoreItems();
