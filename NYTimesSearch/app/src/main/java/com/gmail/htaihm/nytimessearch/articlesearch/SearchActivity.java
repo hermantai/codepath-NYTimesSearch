@@ -210,6 +210,13 @@ public class SearchActivity extends AppCompatActivity {
                 FragmentManager fm = getSupportFragmentManager();
                 frag.show(fm, "SettingsFragment");
                 return true;
+            case R.id.action_clear_search_history:
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+                        this,
+                        ArticleSearchSuggestionProvider.AUTHORITY,
+                        ArticleSearchSuggestionProvider.MODE);
+                suggestions.clearHistory();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
