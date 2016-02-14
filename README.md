@@ -53,6 +53,7 @@ The following **additional** features are implemented:
   * Hide the ToolBar when scrolling the WebView down to achieve fullscreen
     viewing of the article.
   * Search suggestions with recent queries.
+  * Implement "up" navigation.
 
 ## Video Walkthrough
 

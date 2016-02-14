@@ -38,6 +38,7 @@ public class ArticleWebViewActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final ProgressBar pbLoadingProgressBar = (ProgressBar) findViewById(
                 R.id.pbLoadingProgressBar);
