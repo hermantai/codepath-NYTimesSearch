@@ -2,7 +2,7 @@
 
 **New York Times Article Search** is an android app that allows a user to search for images on web using simple filters. The app utilizes [New York Times Search API](http://developer.nytimes.com/docs/read/article_search_api_v2).
 
-Time spent: **12** hours spent in total
+Time spent: **13** hours spent in total
 
 ## User Stories
 
@@ -38,7 +38,8 @@ The following **additional** features are implemented:
 
 * [x] List anything else that you can get done to improve the app functionality!
   * Add ProgressBar to show animation when searching articles.
-  * Add ProgressBar to show progress when loading individal articles in the WebView
+  * Add ProgressBar to show progress when loading individal articles in the
+    WebView
   * Persistence of query entered and filters using Shared Preferences.
   * Collapse the SearchView upon the search button is pressed.
   * Use a button to pick a date. The button shows the date picked. (Not sure if
@@ -49,6 +50,8 @@ The following **additional** features are implemented:
   * Fix the issue of EndlessRecyclerViewScrollListener does not load more items
     if the network is interrupted or an API call has an error because it is
     stuck at "loading" state.
+  * Hide the ToolBar when scrolling the WebView down to achieve fullscreen
+    viewing of the article.
 
 ## Video Walkthrough
 
