@@ -20,6 +20,14 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Although an article search is done within the same Activity instead of starting
+            a new one with a search intent, this intent-filter is needed for this Activity
+            to provide a SearchableInfo for the SearchView -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                       android:resource="@xml/searchable"/>
         </activity>
         <activity
             android:name=".articleview.ArticleWebViewActivity"
@@ -28,6 +36,11 @@
         </activity>
         <activity android:name=".articleview.ArticleDetailActivity">
         </activity>
+
+        <provider
+            android:name=".providers.ArticleSearchSuggestionProvider"
+            android:authorities="com.gmail.htaihm.nytimessearch.providers.ArticleSearchSuggestionProvider"
+            />
     </application>
 
 </manifest>

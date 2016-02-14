@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="hint">Enter search query</string>
     <string name="search">Search</string>
-    <string name="title_activity_article">ArticleActivity</string>
+    <string name="title_activity_article">NYTimesSearch</string>
     <string name="label_begin_date">Begin Date</string>
     <string name="label_sort_order">Sort Order</string>
     <string name="label_news_desk_value">News Desk Values</string>

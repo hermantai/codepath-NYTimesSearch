@@ -1,13 +1,17 @@
 package com.gmail.htaihm.nytimessearch.articlesearch;
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -32,6 +36,7 @@ import com.gmail.htaihm.nytimessearch.helper.ErrorHandling;
 import com.gmail.htaihm.nytimessearch.helper.LogUtil;
 import com.gmail.htaihm.nytimessearch.helper.NetworkUtil;
 import com.gmail.htaihm.nytimessearch.model.Article;
+import com.gmail.htaihm.nytimessearch.providers.ArticleSearchSuggestionProvider;
 import com.gmail.htaihm.nytimessearch.repo.QueryPreferences;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -90,10 +95,19 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         setUpViews();
+
+        // Not necessarily handling the search intent, but since we have an intent anyway, may as
+        // well handle it.
+        Intent i = getIntent();
+        if (i.getAction().equals(Intent.ACTION_SEARCH)) {
+            String query = i.getStringExtra(SearchManager.QUERY);
+            fetchArticles(query, 0);
+        }
     }
 
     private void setUpViews() {
@@ -124,16 +138,23 @@ public class SearchActivity extends AppCompatActivity {
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        final SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                QueryPreferences.setQuery(SearchActivity.this, query);
+
                 fetchArticles(query, 0);
                 // workaround to avoid issues with some emulators and keyboard devices firing
                 // twice if a keyboard enter is used
                 // see https://code.google.com/p/android/issues/detail?id=24599
                 searchView.clearFocus();
                 searchItem.collapseActionView();
-                QueryPreferences.setQuery(SearchActivity.this, query);
+
+                SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+                        SearchActivity.this,
+                        ArticleSearchSuggestionProvider.AUTHORITY,
+                        ArticleSearchSuggestionProvider.MODE);
+                suggestions.saveRecentQuery(query, null);
                 return true;
             }
 
@@ -141,14 +162,35 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 return false;
             }
-        });
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
+        };
+        searchView.setOnQueryTextListener(queryTextListener);
+
+        // Wire up the search suggestion
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
             @Override
-            public void onClick(View v) {
-                String q = QueryPreferences.getQuery(SearchActivity.this);
-                if (!TextUtils.isEmpty(q)) {
-                    searchView.setQuery(q, false);
+            public boolean onSuggestionClick(int position) {
+                // The default behavior of SearchView is to fire up an intent for search.
+                // However, we do not want to perform a search using an intent, so we just get the
+                // suggestion clicked and perform the search the same way that a query is submitted
+                // by the user.
+                CursorAdapter adapter = searchView.getSuggestionsAdapter();
+                Cursor c = searchView.getSuggestionsAdapter().getCursor();
+                if (c != null && c.moveToPosition(position)) {
+                    CharSequence suggestion = adapter.convertToString(c);
+                    if (suggestion != null) {
+                        queryTextListener.onQueryTextSubmit(suggestion.toString());
+                    }
                 }
+                return true;
+            }
+
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                // Return false to get the default behavior, which is rewriting the query to
+                // become the suggestion.
+                return false;
             }
         });
 
