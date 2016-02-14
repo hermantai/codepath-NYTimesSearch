@@ -226,6 +226,7 @@ public class SearchActivity extends AppCompatActivity {
     private void fetchArticles(String query, final int pageNumber) {
         if (!NetworkUtil.isNetworkAvailable(this)) {
             Toast.makeText(this, "Network is not available", Toast.LENGTH_LONG).show();
+            mEndlessRecyclerViewScrollListener.notifyLoadMoreFailed();
             return;
         }
         if (pageNumber == 0) {
