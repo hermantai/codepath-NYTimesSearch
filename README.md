@@ -2,7 +2,7 @@
 
 **New York Times Article Search** is an android app that allows a user to search for images on web using simple filters. The app utilizes [New York Times Search API](http://developer.nytimes.com/docs/read/article_search_api_v2).
 
-Time spent: **16** hours spent in total
+Time spent: **17** hours spent in total
 
 ## User Stories
 
@@ -59,7 +59,9 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='ny-times-search-seach-and-share.gif' title='Video Walkthrough search and share' width='' alt='Video Walkthrough' />
+<img src='ny-times-search-filtered-search.gif' title='Video Walkthrough filtered search' width='' alt='Video Walkthrough' />
+<img src='ny-times-search-re-enabling-network-search-more-clear-history.gif' title='Video Walkthrough network interruption and clear search suggestions history' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
@@ -69,8 +71,12 @@ Describe any challenges encountered while building the app.
 
 ## Open-source libraries used
 
+- [Apache Commons Lang](https://commons.apache.org/proper/commons-lang/) - For unescaping html
 - [Android Async HTTP](https://github.com/loopj/android-async-http) - Simple asynchronous HTTP requests with JSON parsing
-- [Picasso](http://square.github.io/picasso/) - Image loading and caching library for Android
+- [Butter Knife](http://jakewharton.github.io/butterknife/) - Field and method binding for Android views
+- [Glide](https://github.com/bumptech/glide) - An image loading and caching library for Android focused on smooth scrolling
+- [Gson](https://github.com/google/gson) - A Java serialization library that can convert Java Objects into JSON and back.
+
 
 ## License
 
