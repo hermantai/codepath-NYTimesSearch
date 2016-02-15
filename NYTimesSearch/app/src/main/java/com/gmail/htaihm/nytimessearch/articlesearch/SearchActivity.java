@@ -282,10 +282,8 @@ public class SearchActivity extends AppCompatActivity {
         if (BuildConfig.DEBUG) {
             Log.d(
                     TAG,
-                    String.format(
-                            "Search article with url: %s, request params: %s",
-                            url,
-                            params));
+                    "Search article with URL: " + client.getUrlWithQueryString(true, url, params)
+                    );
         }
 
         showLoading(true);
